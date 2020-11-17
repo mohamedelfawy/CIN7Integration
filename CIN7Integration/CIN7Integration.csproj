@@ -47,12 +47,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CategoriesSync.cs" />
-    <Compile Include="ContactsSync.cs" />
-    <Compile Include="OrderSync.cs" />
-    <Compile Include="ProductsSync.cs" />
+    <Compile Include="SyncServices\CategoriesSync.cs" />
+    <Compile Include="SyncServices\ContactsSync.cs" />
+    <Compile Include="Models\ECommerceCategoryApiModel.cs" />
+    <Compile Include="SyncServices\OrderSync.cs" />
+    <Compile Include="SyncServices\ProductsSync.cs" />
     <Compile Include="StartUp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SyncServices\RestApi.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

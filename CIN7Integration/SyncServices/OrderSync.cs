@@ -8,22 +8,26 @@ using System.Threading.Tasks;
 
 namespace CIN7Integration
 {
-    public class CategoriesSync
+    public class OrderSync
     {
         #region Fields 
         public string _CIN7_UsereName { get; set; }
         public string _CIN7_ApiKey { get; set; }
         public string _CRM_ApiKey { get; set; }
         public DateTime? _DateFrom { get; set; }
+        public string _CRM_AccountId { get; set; }
+        public string _CRM_UserName { get; set; }
 
         #endregion
         #region Ctor 
-        public CategoriesSync(string cinUserName, string cinAPiKey, string crmAPIKey, DateTime? fromDate)
+        public OrderSync(string cinUserName, string cinAPiKey, string crmAPIKey, string crmAccountId,string crmuserName, DateTime? fromDate)
         {
             this._CIN7_ApiKey = cinAPiKey;
             this._CIN7_UsereName = cinUserName;
             this._CRM_ApiKey = crmAPIKey;
             this._DateFrom = fromDate;
+            this._CRM_AccountId = crmAccountId;
+            this._CRM_UserName = crmuserName;
         }
         #endregion
         #region Functions 
@@ -31,13 +35,14 @@ namespace CIN7Integration
         {
             //1- get data from Cin7
             var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-
+            
 
 
             // 2- post data to CRM
 
         }
         #endregion
+
 
     }
 }
