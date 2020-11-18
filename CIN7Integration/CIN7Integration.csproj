@@ -47,6 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ECommerceOrderApiModel.cs" />
+    <Compile Include="Models\ECommerceProductApiModel.cs" />
     <Compile Include="SyncServices\CategoriesSync.cs" />
     <Compile Include="SyncServices\ContactsSync.cs" />
     <Compile Include="Models\ECommerceCategoryApiModel.cs" />
