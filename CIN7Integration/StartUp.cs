@@ -16,7 +16,7 @@ namespace CIN7Integration
                 var category = new CategoriesSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
                 var contact = new ContactsSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
                 var order = new OrderSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
-
+                // mohamed elfawy edit
                 category.Start();
                 product.Start();
                 contact.Start();
