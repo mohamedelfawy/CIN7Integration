@@ -8,8 +8,13 @@ namespace CIN7Integration.Models
 {
     public class ECommerceProductApiModel
     {
+        public ECommerceProductApiModel()
+        {
+            categories = new List<ECommerceCategoryApiModel>();
+            variants = new List<ECommerceProductVariant>();
+        }
         public string _id { get; set; }
-        public string AccountId { get; set; }
+       public string AccountId { get; set; }
         public string ContactId { get; set; }
         public string UserId { get; set; }
         public DateTime CreatedOn { get; set; }
@@ -21,9 +26,17 @@ namespace CIN7Integration.Models
         public string ProviderProductName { get; set; }
         public string ProductType { get; set; }
         public string tags { get; set; }
-            //"variants": [{_ : _}] ?
-        public List<ECommerceCategoryApiModel> Categories ;
+        public List<ECommerceProductVariant> variants { get; set; }
+        public List<ECommerceCategoryApiModel> categories { get; set; }
         public string Image { get; set; }
         public string ProductHandle { get; set; }
+    }
+
+    public class ECommerceProductVariant
+    {
+        public string ProviderVariantId { get; set; }
+        public string Name { get; set; }
+        public string sku { get; set; }
+        public string price { get; set; }
     }
 }
