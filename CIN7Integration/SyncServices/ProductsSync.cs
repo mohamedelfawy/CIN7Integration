@@ -52,10 +52,13 @@ namespace CIN7Integration
                     ProviderProductId = Product.Id.ToString(),
                     ProviderProductName = Product.Name,
                     ProductType = Product.ProductType,
+                    UserId = Product.Id.ToString(),
                 });
             }
+
+           
             // 2- post data to CRM
-            var url = "" + this._CRM_UserName;
+            var url = "/api/1.0/Products/Save/" + this._CIN7_UsereName;
             var content = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string,string>("products",JsonConvert.SerializeObject(CRMProductList))

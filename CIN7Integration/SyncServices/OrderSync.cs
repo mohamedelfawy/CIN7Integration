@@ -38,7 +38,6 @@ namespace CIN7Integration
         {
             //1- get data from Cin7
             var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            //var PurchaseOrderList = api.PurchaseOrders.Find(modifiedSince: this._DateFrom); ?
             var SalesOrderList = api.SalesOrders.Find(modifiedSince: this._DateFrom);
 
             var CRMOrderList = new List<ECommerceOrderApiModel>();
@@ -52,9 +51,16 @@ namespace CIN7Integration
                     EcommProviderName = "CIN7",
                     ProviderStoreId = this._CRM_UserName,
                     ProviderOrderId = SalesOrder.Id.ToString(),
-                    //how to know exact property ??
+                    OrderCustomData = SalesOrder.CustomerOrderNo,
+                    TotalTax = double.Parse(SalesOrder.Total.ToString()),
+                    TotalDiscount = double.Parse(SalesOrder.DiscountTotal.ToString()),
+                    NumOfLines = int.Parse(SalesOrder.LineItems.ToString()),
+                    ShippingStatus = SalesOrder.DeliveryState,
+                    Currency = SalesOrder.CurrencyCode,
                 });
+          
             }
+
 
             // 2- post data to CRM
             var url = "/api/1.0/Orders/Save/CIN7/" + this._CIN7_UsereName;
@@ -63,7 +69,7 @@ namespace CIN7Integration
             {
                new KeyValuePair<string, string>("orders",JsonConvert.SerializeObject(CRMOrderList)),
             });
-            var response = RestApi.PostRequest(this._CIN7_UsereName, this._CRM_ApiKey, url, content);
+            var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, content);
 
         }
         #endregion
