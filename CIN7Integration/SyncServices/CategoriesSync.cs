@@ -41,7 +41,7 @@ namespace CIN7Integration
         {
             //1- get data from Cin7
             var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            var CategoriesList = cin7_api.ProductCategories.Find(modifiedSince: this._DateFrom);
+            var CategoriesList = cin7_api.ProductCategories.Find();
             
             var CRMCategoryList = new List<ECommerceCategoryApiModel>();
             foreach(var item in CategoriesList)

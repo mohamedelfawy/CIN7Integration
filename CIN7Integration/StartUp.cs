@@ -8,10 +8,14 @@ namespace CIN7Integration
 {
     public class StartUp
     {
-        public bool StartSync(string cinUserName,string cinAPiKey ,string crmAPIKey ,string crmAccountId,string crmUserName, DateTime? fromDate)
+        public static bool StartSync(string cinUserName,string cinAPiKey ,string crmAPIKey ,string crmAccountId,string crmUserName, DateTime? fromDate)
         {
             try
             {
+                if(fromDate.HasValue)
+                {
+                    fromDate = fromDate.Value.ToUniversalTime();
+                }
                 var product = new ProductsSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
                 var category = new CategoriesSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
                 var contact = new ContactsSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
