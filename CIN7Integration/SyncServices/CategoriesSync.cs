@@ -50,10 +50,12 @@ namespace CIN7Integration
                 {
                     AccountId = this._CRM_AccountId,
                     CreatedOn = DateTime.Now,
-                    ECommerceProviderName = "CIN7",
+                    ECommerceProviderName = "WooCommerce",
                     ProviderCategoryId = item.Id.ToString(),
                     ProviderStoreId = this._CIN7_UsereName,
                     Title = item.Name,
+                    Description = item.Description,
+                    
 
                 });
             }

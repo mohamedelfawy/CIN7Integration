@@ -48,7 +48,7 @@ namespace CIN7Integration
                 {
                     AccountId = this._CRM_AccountId,
                     CreatedOn = DateTime.Now,
-                    EcommProviderName = "CIN7",
+                    EcommProviderName = "WooCommerce",
                     ProviderStoreId = this._CRM_UserName,
                     ProviderOrderId = SalesOrder.Id.ToString(),
                     OrderCustomData = SalesOrder.CustomerOrderNo,

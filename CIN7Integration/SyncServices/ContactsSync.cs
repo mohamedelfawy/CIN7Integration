@@ -66,7 +66,7 @@ namespace CIN7Integration
             }
            
             // 2- post data to CRM
-            var url = "/api/1.0/Contacts/New" + this._CIN7_UsereName;
+            var url = "/api/1.0/Contacts/SaveExternalBatch/CIN7/"+_CIN7_UsereName;
             var content = new FormUrlEncodedContent(new[] 
             {
               new  KeyValuePair<string,string>("", JsonConvert.SerializeObject(CRMContactList))

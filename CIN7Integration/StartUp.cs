@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CIN7Integration.SyncServices;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,11 +21,13 @@ namespace CIN7Integration
                 var category = new CategoriesSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
                 var contact = new ContactsSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
                 var order = new OrderSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
-                // mohamed elfawy edit
+                var store = new StoreSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
+
+                store.Start();
                 category.Start();
                 product.Start();
                 contact.Start();
-                order.Start();
+                //order.Start();
                 return true;
             }
             catch(Exception e)

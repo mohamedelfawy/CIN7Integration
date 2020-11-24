@@ -47,6 +47,7 @@
     <Compile Include="Models\ECommerceContactApiModel.cs" />
     <Compile Include="Models\ECommerceOrderApiModel.cs" />
     <Compile Include="Models\ECommerceProductApiModel.cs" />
+    <Compile Include="Models\ECommerceStoreViewModel.cs" />
     <Compile Include="SyncServices\CategoriesSync.cs" />
     <Compile Include="SyncServices\ContactsSync.cs" />
     <Compile Include="Models\ECommerceCategoryApiModel.cs" />
@@ -55,6 +56,7 @@
     <Compile Include="StartUp.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SyncServices\RestApi.cs" />
+    <Compile Include="SyncServices\StoreSync.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -30,7 +30,7 @@ namespace CIN7Integration
             this._CRM_ApiKey = crmAPIKey;
             this._DateFrom = fromDate;
             this._CRMAccountId = crmAccountId;
-            this._CIN7_UsereName = crmUserName;
+            this._CRM_UserName = crmUserName;
         }
         #endregion
         #region Functions 
@@ -43,22 +43,51 @@ namespace CIN7Integration
             var CRMProductList = new List<ECommerceProductApiModel>();
             foreach (var Product in ProductsList)
             {
-                CRMProductList.Add(new ECommerceProductApiModel()
+                var tempProduct = new ECommerceProductApiModel()
                 {
-                    AccountId = this._CRMAccountId,
-                    CreatedOn = DateTime.Now,
-                    ECommerceProviderName = "CIN7",
-                    ProviderStoreId = this._CRM_UserName,
+                    CreatedOn = Product.CreatedDate.HasValue ? Product.CreatedDate.Value : DateTime.Now,
+                    ECommerceProviderName = "WooCommerce",
+                    ProviderStoreId = this._CIN7_UsereName,
                     ProviderProductId = Product.Id.ToString(),
                     ProviderProductName = Product.Name,
                     ProductType = Product.ProductType,
-                    UserId = Product.Id.ToString(),
-                });
+                    ProductHandle = Product.Name,
+                    UpdatedOn = Product.CreatedDate.HasValue ? Product.CreatedDate.Value : DateTime.Now
+                };
+                if(Product.ProductOptions != null && Product.ProductOptions.Count > 0)
+                {
+                    if(Product.ProductOptions[0].Image !=null)
+                    {
+                        tempProduct.Image = Product.ProductOptions[0].Image.Link;
+                    }
+                    foreach(var item in Product.ProductOptions)
+                    {
+                        tempProduct.variants.Add(new ECommerceProductVariant()
+                        {
+                            Name = Product.Name,
+                            price = item.WholesalePrice.Value.ToString(),
+                            ProviderVariantId = item.Id.ToString(),
+                            sku = item.Code
+                        });
+                    }
+                }
+                if(Product.CategoryIdArray != null && Product.CategoryIdArray.Length> 0)
+                {
+                    tempProduct.categories.Add(new ECommerceCategoryApiModel()
+                    {
+                        Title = Product.Category,
+                        ProviderCategoryId = Product.CategoryIdArray[0].ToString(),
+                        ProviderStoreId = _CIN7_UsereName
+                    });
+                }
+           
+                CRMProductList.Add(tempProduct);
+                
             }
 
-           
+
             // 2- post data to CRM
-            var url = "/api/1.0/Products/Save/" + this._CIN7_UsereName;
+            var url = "/api/1.0/Products/Save/CIN7/" + this._CIN7_UsereName;
             var content = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string,string>("products",JsonConvert.SerializeObject(CRMProductList))
