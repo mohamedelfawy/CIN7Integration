@@ -54,18 +54,14 @@ namespace CIN7Integration
                     ProductHandle = Product.Name,
                     UpdatedOn = Product.CreatedDate.HasValue ? Product.CreatedDate.Value : DateTime.Now
                 };
-                if(Product.ProductOptions != null && Product.ProductOptions.Count > 0)
+                if(Product.ProductOptions != null && Product.ProductOptions.ToList().Count > 0)
                 {
-                    if(Product.ProductOptions[0].Image !=null)
-                    {
-                        tempProduct.Image = Product.ProductOptions[0].Image.Link;
-                    }
                     foreach(var item in Product.ProductOptions)
                     {
                         tempProduct.variants.Add(new ECommerceProductVariant()
                         {
                             Name = Product.Name,
-                            price = item.WholesalePrice.Value.ToString(),
+                            price = item.WholesalePrice.ToString(),
                             ProviderVariantId = item.Id.ToString(),
                             sku = item.Code
                         });
