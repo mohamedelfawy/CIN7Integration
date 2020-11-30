@@ -23,11 +23,11 @@ namespace CIN7Integration
                 var order = new OrderSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
                 var store = new StoreSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
 
-                store.Start();
+               // store.Start();
                 category.Start();
                 product.Start();
                 contact.Start();
-                //order.Start();
+                order.Start();
                 return true;
             }
             catch(Exception e)

@@ -87,7 +87,7 @@ namespace CIN7Integration
 
 
             // 2- post data to CRM
-            var url = "/api/1.0/Products/Save/CIN7/" + this._CIN7_UsereName;
+            var url = "/api/1.0/Products/Save/WooCommerce/" + this._CIN7_UsereName;
             var content = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string,string>("products",JsonConvert.SerializeObject(CRMProductList))

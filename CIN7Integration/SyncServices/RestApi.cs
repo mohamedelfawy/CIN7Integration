@@ -10,7 +10,7 @@ namespace CIN7Integration.SyncServices
 {
    public class RestApi
     {
-        public const string BaseURL = "https://app.revampcrm.com";
+        public const string BaseURL = "https://localhost:44308";
         public static HttpResponseMessage PostRequest(string userName,string CRMApiKey, string url, HttpContent content = null)
         {
             var parameter = new Dictionary<string, string>();

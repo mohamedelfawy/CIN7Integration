@@ -43,36 +43,32 @@ namespace CIN7Integration
             var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
             var ContactsList = api.Contacts.Find(modifiedSince: this._DateFrom);
             var CRMContactList = new List<ECommerceContactApiModel>();
+            var url = "/api/1.0/Contacts/New/";
 
             foreach (var Contact in ContactsList)
             {
-                CRMContactList.Add(new ECommerceContactApiModel()
+                var content = new FormUrlEncodedContent(new[]
                 {
-                    Name = this._CRM_UserName,
-                    CreatedOnUtc = DateTime.Now,
-                    Title = Contact.JobTitle,
-                    Organization = Contact.Company,
-                    ContactInfoSecondaryPhoneNumber =Contact.SecondaryContacts.ToString(),
-                    ContactInfoPrimaryEmail = Contact.Email,
-                    ContactInfoWebsite = Contact.Website,
-                    ContactInfoAddressLine1 = Contact.Address1,
-                    ContactInfoAddressLine2 = Contact.Address2 ,
-                    ContactInfoAddressCity = Contact.City,
-                    ContactInfoAddressPostalCode = Contact.PostalPostCode,
-                    ContactInfoAddressCountry = Contact.PostalCountry,
-                    ContactInfoAddressState = Contact.State,
-                    CountryName = Contact.Country,
-                });
+              new  KeyValuePair<string,string>("Name", _CRM_UserName),
+              new  KeyValuePair<string,string>("Title", Contact.JobTitle),
+              new  KeyValuePair<string,string>("Organization", Contact.Company),
+              new  KeyValuePair<string,string>("ContactInfoSecondaryPhoneNumber", Contact.SecondaryContacts.ToString()),
+              new  KeyValuePair<string,string>("ContactInfoPrimaryEmail", Contact.Email),
+              new  KeyValuePair<string,string>("ContactInfoWebsite", Contact.Website),
+              new  KeyValuePair<string,string>("ContactInfoAddressLine1", Contact.Address1),
+              new  KeyValuePair<string,string>("ContactInfoAddressLine2",Contact.Address2 ),
+              new  KeyValuePair<string,string>("ContactInfoAddressCity", Contact.City),
+              new  KeyValuePair<string,string>("ContactInfoAddressPostalCode", Contact.PostalPostCode),
+              new  KeyValuePair<string,string>("ContactInfoAddressCountry", Contact.PostalCountry),
+              new  KeyValuePair<string,string>("ContactInfoAddressState", Contact.State),
+              new  KeyValuePair<string,string>("CountryName", Contact.Country),
+
+            });
+                var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, content);
+
             }
            
-            // 2- post data to CRM
-            var url = "/api/1.0/Contacts/SaveExternalBatch/CIN7/"+_CIN7_UsereName;
-            var content = new FormUrlEncodedContent(new[] 
-            {
-              new  KeyValuePair<string,string>("", JsonConvert.SerializeObject(CRMContactList))
-            });
-            var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, content);
-        }
+              }
         #endregion
     }
 }

@@ -37,23 +37,19 @@ namespace CIN7Integration.SyncServices
         #region Functions 
         public void Start()
         {
-            var CRMStore = new ECommerceStoreViewModel() {
-                AccessToken = _CIN7_ApiKey,
-                CreatedOn = DateTime.Now,
-                ProviderName = "WooCommerce",
-                StoreEmail = "smeligy@revampco.com",
-                StoreId = _CIN7_UsereName,
-                Title = _CIN7_UsereName,
-                UpdatedOn = DateTime.Now
-            };
-            
+          
             // 2- post data to CRM
             //POST 
             var url = "/api/1.0/Stores/Save";
 
             var content = new FormUrlEncodedContent(new[]
             {
-               new KeyValuePair<string, string>("",JsonConvert.SerializeObject(CRMStore)),
+               new KeyValuePair<string, string>("AccessToken",_CIN7_ApiKey),
+               new KeyValuePair<string, string>("ProviderName","WooCommerce"),
+               new KeyValuePair<string, string>("StoreEmail","smeligy@revampco.com"),
+               new KeyValuePair<string, string>("StoreId",_CIN7_UsereName),
+               new KeyValuePair<string, string>("Title",_CIN7_UsereName),
+
             });
             var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, content);
 
