@@ -40,8 +40,13 @@ namespace CIN7Integration
         public void Start()
         {
             //1- get data from Cin7
+            // use CIN 7 API instead of the CIN7 dll 
+            //just make a get request to https://api.cin7.com/api/Help/Api/GET-v1-Contacts_fields_where_order_page_rows
+            // using basic Auth with this._CIN7_UsereName & this._CIN7_ApiKey
+            // an example for get request with basic auth https://stackoverflow.com/questions/4334521/httpwebrequest-using-basic-authentication
+
             var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            var ContactsList = api.Contacts.Find(modifiedSince: this._DateFrom);
+            var ContactsList = api.Contacts.Find<Cin7ApiWrapper.Models.Contact>();
             var CRMContactList = new List<ECommerceContactApiModel>();
             var url = "/api/1.0/Contacts/New/";
 
