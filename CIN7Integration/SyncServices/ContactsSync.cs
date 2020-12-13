@@ -53,6 +53,7 @@ namespace CIN7Integration
                 var tempContact= new ECommerceContactApiModel()
                 {
                     //Name="",
+                    
                     Title=item.JobTitle,
                     Organization=item.Company,
                     ContactInfoSecondaryPhoneNumber=item.Phone,
@@ -65,10 +66,12 @@ namespace CIN7Integration
                     ContactInfoAddressPostalCode=item.PostalPostCode,
                     ContactInfoAddressCountry=item.Country,
                     ContactInfoAddressState=item.State,
-                    CreatedOnUtc=item.CreatedDate,
-                    UpdateOnUtc=item.ModifiedDate,
-                    CountryName=item.Country,
+                    CreatedOn=item.CreatedDate,
+                    UpdatedOn=item.ModifiedDate,
+                    ContactInfoAddressCity=item.Country,
                     EmailValue = item.Email,
+                    ExternalProviderId = item.Id.ToString(),
+                    ExternalProviderName = "WooCommerce"
                     //ContactInfoskype = "",
                     //ContactInfoFacebook = "",
                     //ContactInfoTwitter = "",
@@ -83,19 +86,9 @@ namespace CIN7Integration
                     
 
                 };
-               // Console.WriteLine(item.LastName);
-                if (item.SecondaryContacts != null && item.SecondaryContacts.ToList().Count > 0)
-                {
-                    foreach (var i in item.SecondaryContacts)
-                    {
-                        tempContact.ExternalProviders.Add(new ExternalProvider()
-                        {
-                            ExternalId = i.Id,
-                            ProviderName = "WooCommerce",
-                            SourceEmail = i.Email
-                        });
-                    }
-                }
+                // Console.WriteLine(item.LastName);
+
+              
 
                 CRMContactList.Add(tempContact);
 
@@ -106,11 +99,8 @@ namespace CIN7Integration
             // 2- post data to CRM
             var url = "/api/1.0/Contacts/SaveExternalBatch/WooCommerce/" + this._CIN7_UsereName;
 
-            var content = new FormUrlEncodedContent(new[]
-            {
-               new KeyValuePair<string, string>("contacts",JsonConvert.SerializeObject(CRMContactList)),
-            });
-             var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, content);
+       
+             var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMContactList));
 
 
         }

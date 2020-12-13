@@ -11,7 +11,7 @@ namespace CIN7Integration.SyncServices
    public class RestApi
     {
         public const string BaseURL = "https://app.revampcrm.com/";
-        public static HttpResponseMessage PostRequest(string userName,string CRMApiKey, string url, HttpContent content = null)
+        public static HttpResponseMessage PostRequest(string userName,string CRMApiKey, string url, string JsonFormatbody = "")
         {
             var parameter = new Dictionary<string, string>();
 
@@ -26,23 +26,12 @@ namespace CIN7Integration.SyncServices
 
                     client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderValue);
-                    if (content == null)
-                    {
-                        HttpResponseMessage response = client.PostAsync(client.BaseAddress, null).Result;
-                        return response;
-
-                    }
-                    else
-                    {
-
-                        HttpResponseMessage response = client.PostAsync(client.BaseAddress, content).Result;
-                        return response;
-
-
-
-                    }
-
-                }
+                var postData = new StringContent(JsonFormatbody,
+                                              Encoding.UTF8,
+                                              "application/json");
+                HttpResponseMessage response = client.PostAsync(client.BaseAddress, postData).Result;
+                return response;
+            }
                 catch (Exception e)
                 {
                     parameter.Add("Tip", "Post request user name :" + userName + " , Url:" + url);

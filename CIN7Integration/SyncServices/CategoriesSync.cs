@@ -46,6 +46,7 @@ namespace CIN7Integration
             var CRMCategoryList = new List<ECommerceCategoryApiModel>();
             foreach(var item in CategoriesList)
             {
+                
                 CRMCategoryList.Add(new ECommerceCategoryApiModel()
                 {
                     AccountId = this._CRM_AccountId,
@@ -58,17 +59,32 @@ namespace CIN7Integration
                     
 
                 });
+
+                if(item.ParentId > 0)
+                {
+                  var cat =   cin7_api.ProductCategories.Find(item.ParentId);
+                    CRMCategoryList.Add(new ECommerceCategoryApiModel()
+                    {
+                        AccountId = this._CRM_AccountId,
+                        CreatedOn = DateTime.Now,
+                        ECommerceProviderName = "WooCommerce",
+                        ProviderCategoryId = cat.Id.ToString(),
+                        ProviderStoreId = this._CIN7_UsereName,
+                        Title = cat.Name,
+                        Description = cat.Description,
+
+
+                    });
+
+                }
             }
 
             // 2- post data to CRM
             //POST 
             var url = "/api/1.0/Categories/Save/WooCommerce/" + this._CIN7_UsereName;
 
-            var content = new FormUrlEncodedContent(new[]
-            {
-               new KeyValuePair<string, string>("categories",JsonConvert.SerializeObject(CRMCategoryList)),
-            });
-            var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, content);
+          
+            var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url,JsonFormatbody: JsonConvert.SerializeObject(CRMCategoryList));
 
         }
         #endregion
