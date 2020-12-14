@@ -19,17 +19,18 @@ namespace CIN7Integration
         public string _CIN7_ApiKey { get; set; }
         public string _CRM_ApiKey { get; set; }
         public DateTime? _DateFrom { get; set; }
-        public string _CRMAccountId{get;set;}
+        public string _providerName{get;set;}
         public string _CRM_UserName { get; set; }
+        public string _ProviderName { get; set; }
         #endregion
         #region Ctor 
-        public ProductsSync(string cinUserName, string cinAPiKey, string crmAPIKey, string crmAccountId,string crmUserName, DateTime? fromDate)
+        public ProductsSync(string cinUserName, string cinAPiKey, string crmAPIKey, string providerName,string crmUserName, DateTime? fromDate)
         {
             this._CIN7_ApiKey = cinAPiKey;
             this._CIN7_UsereName = cinUserName;
             this._CRM_ApiKey = crmAPIKey;
             this._DateFrom = fromDate;
-            this._CRMAccountId = crmAccountId;
+            this._providerName = providerName;
             this._CRM_UserName = crmUserName;
         }
         #endregion
@@ -46,7 +47,7 @@ namespace CIN7Integration
                 var tempProduct = new ECommerceProductApiModel()
                 {
                     CreatedOn = Product.CreatedDate.HasValue ? Product.CreatedDate.Value : DateTime.Now,
-                    ECommerceProviderName = "WooCommerce",
+                    ECommerceProviderName = _ProviderName,
                     ProviderStoreId = this._CIN7_UsereName,
                     ProviderProductId = Product.Id.ToString(),
                     ProviderProductName = Product.Name,
@@ -61,22 +62,31 @@ namespace CIN7Integration
                         tempProduct.variants.Add(new ECommerceProductVariant()
                         {
                             Name = Product.Name,
-                            price = item.WholesalePrice.ToString(),
+                            price = item.WholesalePrice.HasValue?item.WholesalePrice.Value.ToString():"0",
                             ProviderVariantId = item.Id.ToString(),
                             sku = item.Code
                         });
                     }
                 }
-                if(Product.CategoryIdArray != null && Product.CategoryIdArray.Length> 0)
+                if(Product.CategoryIdArray != null)
+                { 
+                foreach(var cat in Product.CategoryIdArray)
                 {
-                    tempProduct.categories.Add(new ECommerceCategoryApiModel()
-                    {
-                        Title = Product.Category,
-                        ProviderCategoryId = Product.CategoryIdArray[0].ToString(),
-                        ProviderStoreId = _CIN7_UsereName
-                    });
+                        var category = api.ProductCategories.Find(cat);            
+                        tempProduct.categories.Add(new ECommerceCategoryApiModel()
+                        {
+                            ProviderCategoryId = category.Id.ToString(),
+                            CreatedOn = DateTime.Now,
+                            Description = category.Description,
+                            ECommerceProviderName= _ProviderName,
+                            ProviderCategoryHandle = category.Name,
+                            Title = category.Name,
+                            UpdatedOn = DateTime.Now,
+                            ProviderStoreId = _CIN7_UsereName
+                        });
+
+                    }
                 }
-           
                 CRMProductList.Add(tempProduct);
                 
             }

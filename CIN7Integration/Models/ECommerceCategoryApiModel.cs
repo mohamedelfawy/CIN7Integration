@@ -8,6 +8,7 @@ namespace CIN7Integration.Models
 {
    public class ECommerceCategoryApiModel
     {
+
         public string _id { get; set; }
         public string AccountId { get; set; }
         public string ContactId { get; set; }
@@ -19,5 +20,6 @@ namespace CIN7Integration.Models
         public string ProviderCategoryId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+
     }
 }

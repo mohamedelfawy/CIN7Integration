@@ -9,7 +9,7 @@ namespace CIN7Integration
 {
     public class StartUp
     {
-        public static bool StartSync(string cinUserName,string cinAPiKey ,string crmAPIKey ,string crmAccountId,string crmUserName, DateTime? fromDate)
+        public static bool StartSync(string cinEmail, string cinUserName, string cinAPiKey, string crmAPIKey, string crmUserName, DateTime? fromDate, string ProviderName)
         {
             try
             {
@@ -17,11 +17,11 @@ namespace CIN7Integration
                 {
                     fromDate = fromDate.Value.ToUniversalTime();
                 }
-                var product = new ProductsSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
-                var category = new CategoriesSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
-                var contact = new ContactsSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
-                var order = new OrderSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
-                var store = new StoreSync(cinUserName, cinAPiKey, crmAPIKey, crmAccountId, crmUserName, fromDate);
+                var product = new ProductsSync(cinUserName, cinAPiKey, crmAPIKey, ProviderName, crmUserName, fromDate);
+                var category = new CategoriesSync(cinUserName, cinAPiKey, crmAPIKey, ProviderName, crmUserName, fromDate);
+                var contact = new ContactsSync(cinUserName, cinAPiKey, crmAPIKey, ProviderName, crmUserName, fromDate);
+                var order = new OrderSync(cinUserName, cinAPiKey, crmAPIKey, ProviderName, crmUserName, fromDate);
+                var store = new StoreSync(cinEmail, cinUserName, cinAPiKey, crmAPIKey, ProviderName, crmUserName, fromDate);
 
                 store.Start();
                 category.Start();

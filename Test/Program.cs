@@ -12,10 +12,12 @@ namespace Test
         {
             string Cin7UsreName = "RevampcoUS";
             string Cin7ApiKey = "ef08b156c82740e191f0254b26e30c87";
-            string CRMUserName = "mohamed.elfawy+cin@gmail.com";
-            string CRMApiKey = "DWDPV3MKI1EglnbphFWwONjDtM6pBMdcPlshurLm";
-            string CRMAccountId = "5fbb00f0d40dd72644bcaf14";
-            CIN7Integration.StartUp.StartSync(Cin7UsreName, Cin7ApiKey, CRMApiKey, CRMAccountId, CRMUserName, DateTime.Now.AddYears(-1));
+            string CRMUserName = "meweve4474@ibrilo.com";
+            string CRMApiKey = "nAmrgFVC115gami7Cw02SgdnV5IfTxBhJ7KMqtIc";
+
+            string CIN7_EMail = "smeligy@revampco.com";
+
+            CIN7Integration.StartUp.StartSync(CIN7_EMail,Cin7UsreName, Cin7ApiKey, CRMApiKey, CRMUserName, DateTime.Now.AddYears(-1) , "WooCommerce");
 
         }
     }

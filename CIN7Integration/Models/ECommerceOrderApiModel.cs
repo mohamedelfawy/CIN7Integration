@@ -8,6 +8,11 @@ namespace CIN7Integration.Models
 {
     public class ECommerceOrderApiModel
     {
+
+        public ECommerceOrderApiModel()
+        {
+            LineItems = new List<ECommerceCheckOutLineApiModel>();
+        }
         public string _id { get; set; }
         public string AccountId { get; set; }
 
