@@ -43,66 +43,91 @@ namespace CIN7Integration
 
         public void Start()
         {
-            //1- get data from Cin7
-            var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            var ContactList = cin7_api.Contacts.Find();
-
-            var CRMContactList = new List<ECommerceContactApiModel>();
-            foreach (var item in ContactList)
+            try
             {
-                var tempContact= new ECommerceContactApiModel()
+                //1- get data from Cin7
+                var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
+                var ContactList = cin7_api.Contacts.Find().ToList();
+
+                var listCount = ContactList.Count();
+                int pagenum = 2;
+                if (listCount == 50)
                 {
-                    //Name="",
-                    
-                    Title=item.JobTitle,
-                    Organization=item.Company,
-                    ContactInfoSecondaryPhoneNumber=item.Phone,
-                    ContactInfoSecondaryEmail=item.Email,
-                    ContactInfoPrimaryPhoneNumber=item.AccountsPhone,
-                    ContactInfoPrimaryEmail=item.BillingEmail,
-                    ContactInfoWebsite=item.Website,
-                    ContactInfoAddressLine1=item.Address1,
-                    ContactInfoAddressLine2=item.Address2,
-                    ContactInfoAddressPostalCode=item.PostalPostCode,
-                    ContactInfoAddressCountry=item.Country,
-                    ContactInfoAddressState=item.State,
-                    CreatedOn=item.CreatedDate,
-                    UpdatedOn=item.ModifiedDate,
-                    ContactInfoAddressCity=item.Country,
-                    EmailValue = item.Email,
-                    ExternalProviderId = item.Id.ToString(),
-                    ExternalProviderName = _ProviderName
-                    //ContactInfoskype = "",
-                    //ContactInfoFacebook = "",
-                    //ContactInfoTwitter = "",
-                    //Description = "",
-                    //ContactInfoLinkedIn = "",
-                    //Gender = "",
-                    //Tags = "",
-                    //Score = 0,
-                    //ContactStage = "",
-                    //rating_contact = 0,
-                    //ContactSource = "",
-                    
+                    do
+                    {
+                        var rows = cin7_api.Contacts.Find(page: pagenum, rows: 50);
+                        listCount = rows.Count();
+                        foreach (var item in rows)
+                        {
+                            ContactList.Add(item);
+                        }
+                        pagenum = pagenum + 1;
 
-                };
-                // Console.WriteLine(item.LastName);
+                    } while (listCount == 50);
 
-              
+                }
 
-                CRMContactList.Add(tempContact);
+
+                var CRMContactList = new List<ECommerceContactApiModel>();
+                foreach (var item in ContactList)
+                {
+                    var tempContact = new ECommerceContactApiModel()
+                    {
+                        //Name="",
+
+                        Title = item.JobTitle,
+                        Organization = item.Company,
+                        ContactInfoSecondaryPhoneNumber = item.Phone,
+                        ContactInfoSecondaryEmail = item.Email,
+                        ContactInfoPrimaryPhoneNumber = item.AccountsPhone,
+                        ContactInfoPrimaryEmail = item.BillingEmail,
+                        ContactInfoWebsite = item.Website,
+                        ContactInfoAddressLine1 = item.Address1,
+                        ContactInfoAddressLine2 = item.Address2,
+                        ContactInfoAddressPostalCode = item.PostalPostCode,
+                        ContactInfoAddressCountry = item.Country,
+                        ContactInfoAddressState = item.State,
+                        CreatedOn = item.CreatedDate,
+                        UpdatedOn = item.ModifiedDate,
+                        ContactInfoAddressCity = item.Country,
+                        EmailValue = item.Email,
+                        ExternalProviderId = item.Id.ToString(),
+                        ExternalProviderName = _ProviderName
+                        //ContactInfoskype = "",
+                        //ContactInfoFacebook = "",
+                        //ContactInfoTwitter = "",
+                        //Description = "",
+                        //ContactInfoLinkedIn = "",
+                        //Gender = "",
+                        //Tags = "",
+                        //Score = 0,
+                        //ContactStage = "",
+                        //rating_contact = 0,
+                        //ContactSource = "",
+
+
+                    };
+                    // Console.WriteLine(item.LastName);
+
+
+
+                    CRMContactList.Add(tempContact);
+
+                }
+
+
+
+                // 2- post data to CRM
+                var url = "/api/1.0/Contacts/SaveExternalBatch/WooCommerce/" + this._CIN7_UsereName;
+
+
+                var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMContactList));
 
             }
-
-            
-
-            // 2- post data to CRM
-            var url = "/api/1.0/Contacts/SaveExternalBatch/WooCommerce/" + this._CIN7_UsereName;
-
-       
-             var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMContactList));
-
-
+            catch (Exception e)
+            {
+                Console.WriteLine("ContactSync error: " + e);
+            }
         }
 
         #endregion

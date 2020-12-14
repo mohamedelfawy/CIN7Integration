@@ -36,11 +36,30 @@ namespace CIN7Integration
         #region Functions 
         public void Start()
         {
+            try { 
             //1- get data from Cin7
             var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            var SalesOrderList = api.SalesOrders.Find(modifiedSince: this._DateFrom);
+            var SalesOrderList = api.SalesOrders.Find(modifiedSince: this._DateFrom).ToList();
+                var listCount = SalesOrderList.Count();
+                int pagenum = 2;
+                if (listCount == 50)
+                {
+                    do
+                    {
+                        var rows = api.SalesOrders.Find(page: pagenum, rows: 50, modifiedSince: this._DateFrom);
+                        listCount = rows.Count();
+                        foreach (var item in rows)
+                        {
+                            SalesOrderList.Add(item);
+                        }
+                        pagenum = pagenum + 1;
 
-            var CRMOrderList = new List<ECommerceOrderApiModel>();
+                    } while (listCount == 50);
+
+                }
+
+
+                var CRMOrderList = new List<ECommerceOrderApiModel>();
 
             foreach(var SalesOrder in SalesOrderList)
             {
@@ -111,8 +130,11 @@ namespace CIN7Integration
            
             
             var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMOrderList));
-
-        }
+        }catch(Exception e)
+            {
+                Console.WriteLine("OrdersSync error: " + e);
+            }
+}
         #endregion
 
 

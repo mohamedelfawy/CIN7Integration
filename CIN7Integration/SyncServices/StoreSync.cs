@@ -38,6 +38,7 @@ namespace CIN7Integration.SyncServices
         #region Functions 
         public void Start()
         {
+            try { 
           
             // 2- post data to CRM
             //POST 
@@ -54,6 +55,11 @@ namespace CIN7Integration.SyncServices
             });
             var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, null,content);
 
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("StoreSync error: " + e);
+            }
         }
         #endregion
     }

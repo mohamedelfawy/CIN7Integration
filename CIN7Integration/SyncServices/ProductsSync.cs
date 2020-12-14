@@ -37,65 +37,90 @@ namespace CIN7Integration
         #region Functions 
         public void Start()
         {
-            //1- get data from Cin7
-            var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            var ProductsList = api.Products.Find(modifiedSince: this._DateFrom);
-
-            var CRMProductList = new List<ECommerceProductApiModel>();
-            foreach (var Product in ProductsList)
+            try
             {
-                var tempProduct = new ECommerceProductApiModel()
+                //1- get data from Cin7
+                var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
+                var ProductsList = api.Products.Find(modifiedSince: this._DateFrom).ToList();
+
+                var listCount = ProductsList.Count();
+                int pagenum = 2;
+                if (listCount == 50)
                 {
-                    CreatedOn = Product.CreatedDate.HasValue ? Product.CreatedDate.Value : DateTime.Now,
-                    ECommerceProviderName = _ProviderName,
-                    ProviderStoreId = this._CIN7_UsereName,
-                    ProviderProductId = Product.Id.ToString(),
-                    ProviderProductName = Product.Name,
-                    ProductType = Product.ProductType,
-                    ProductHandle = Product.Name,
-                    UpdatedOn = Product.CreatedDate.HasValue ? Product.CreatedDate.Value : DateTime.Now
-                };
-                if(Product.ProductOptions != null && Product.ProductOptions.ToList().Count > 0)
-                {
-                    foreach(var item in Product.ProductOptions)
+                    do
                     {
-                        tempProduct.variants.Add(new ECommerceProductVariant()
+                        var rows = api.Products.Find(page: pagenum, rows: 50, modifiedSince: this._DateFrom);
+                        listCount = rows.Count();
+                        foreach (var item in rows)
                         {
-                            Name = Product.Name,
-                            price = item.WholesalePrice.HasValue?item.WholesalePrice.Value.ToString():"0",
-                            ProviderVariantId = item.Id.ToString(),
-                            sku = item.Code
-                        });
-                    }
+                            ProductsList.Add(item);
+                        }
+                        pagenum = pagenum + 1;
+
+                    } while (listCount == 50);
+
                 }
-                if(Product.CategoryIdArray != null)
-                { 
-                foreach(var cat in Product.CategoryIdArray)
+
+
+                var CRMProductList = new List<ECommerceProductApiModel>();
+                foreach (var Product in ProductsList)
                 {
-                        var category = api.ProductCategories.Find(cat);            
-                        tempProduct.categories.Add(new ECommerceCategoryApiModel()
+                    var tempProduct = new ECommerceProductApiModel()
+                    {
+                        CreatedOn = Product.CreatedDate.HasValue ? Product.CreatedDate.Value : DateTime.Now,
+                        ECommerceProviderName = _ProviderName,
+                        ProviderStoreId = this._CIN7_UsereName,
+                        ProviderProductId = Product.Id.ToString(),
+                        ProviderProductName = Product.Name,
+                        ProductType = Product.ProductType,
+                        ProductHandle = Product.Name,
+                        UpdatedOn = Product.CreatedDate.HasValue ? Product.CreatedDate.Value : DateTime.Now
+                    };
+                    if (Product.ProductOptions != null && Product.ProductOptions.ToList().Count > 0)
+                    {
+                        foreach (var item in Product.ProductOptions)
                         {
-                            ProviderCategoryId = category.Id.ToString(),
-                            CreatedOn = DateTime.Now,
-                            Description = category.Description,
-                            ECommerceProviderName= _ProviderName,
-                            ProviderCategoryHandle = category.Name,
-                            Title = category.Name,
-                            UpdatedOn = DateTime.Now,
-                            ProviderStoreId = _CIN7_UsereName
-                        });
-
+                            tempProduct.variants.Add(new ECommerceProductVariant()
+                            {
+                                Name = Product.Name,
+                                price = item.WholesalePrice.HasValue ? item.WholesalePrice.Value.ToString() : "0",
+                                ProviderVariantId = item.Id.ToString(),
+                                sku = item.Code
+                            });
+                        }
                     }
+                    if (Product.CategoryIdArray != null)
+                    {
+                        foreach (var cat in Product.CategoryIdArray)
+                        {
+                            var category = api.ProductCategories.Find(cat);
+                            tempProduct.categories.Add(new ECommerceCategoryApiModel()
+                            {
+                                ProviderCategoryId = category.Id.ToString(),
+                                CreatedOn = DateTime.Now,
+                                Description = category.Description,
+                                ECommerceProviderName = _ProviderName,
+                                ProviderCategoryHandle = category.Name,
+                                Title = category.Name,
+                                UpdatedOn = DateTime.Now,
+                                ProviderStoreId = _CIN7_UsereName
+                            });
+
+                        }
+                    }
+                    CRMProductList.Add(tempProduct);
+
                 }
-                CRMProductList.Add(tempProduct);
-                
+
+
+                // 2- post data to CRM
+                var url = "/api/1.0/Products/Save/WooCommerce/" + this._CIN7_UsereName;
+
+                var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMProductList));
+            }catch(Exception e)
+            {
+                Console.WriteLine("ProductsSync error: " + e);
             }
-
-
-            // 2- post data to CRM
-            var url = "/api/1.0/Products/Save/WooCommerce/" + this._CIN7_UsereName;
-         
-           var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMProductList));
         }
         #endregion
 

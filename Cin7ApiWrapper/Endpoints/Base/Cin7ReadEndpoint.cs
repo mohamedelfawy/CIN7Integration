@@ -38,6 +38,9 @@ namespace Cin7ApiWrapper.Endpoints.Base
         public IEnumerable<TModel> Find(int page = 1, int rows = 50, DateTime? modifiedSince = null, string where = null, string sort = null)
         {
             return Client.Get<IEnumerable<TModel>>(EndpointUrl, new QueryBuilder(page, rows, null, modifiedSince, where, sort));
+
+            
+
         }
 
         public IEnumerable<TCustomModel> Find<TCustomModel>(int page = 1, int rows = 50, DateTime? modifiedSince = null, string where = null, string sort = null) where TCustomModel : class

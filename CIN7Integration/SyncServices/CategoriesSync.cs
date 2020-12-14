@@ -39,11 +39,31 @@ namespace CIN7Integration
         #region Functions 
         public void Start()
         {
+            try { 
             //1- get data from Cin7
             var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            var CategoriesList = cin7_api.ProductCategories.Find();
-            
-            var CRMCategoryList = new List<ECommerceCategoryApiModel>();
+            var CategoriesList = cin7_api.ProductCategories.Find().ToList();
+
+                var listCount = CategoriesList.Count();
+                int pagenum = 2;
+                if (listCount == 50)
+                {
+                    do
+                    {
+                        var rows = cin7_api.ProductCategories.Find(page: pagenum, rows: 50);
+                        listCount = rows.Count();
+                        foreach (var item in rows)
+                        {
+                            CategoriesList.Add(item);
+                        }
+                        pagenum = pagenum + 1;
+                        
+                    } while (listCount == 50);
+
+                }
+
+
+                var CRMCategoryList = new List<ECommerceCategoryApiModel>();
             foreach(var item in CategoriesList)
             {
                 
@@ -90,7 +110,11 @@ namespace CIN7Integration
 
           
             var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url,JsonFormatbody: JsonConvert.SerializeObject(CRMCategoryList));
-
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("CategoriesSync error: " + e);
+            }
         }
         #endregion
 
