@@ -5,6 +5,7 @@ using CIN7Integration.SyncServices;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -107,9 +108,6 @@ namespace CIN7Integration
 
 
                     };
-                    // Console.WriteLine(item.LastName);
-
-
 
                     CRMContactList.Add(tempContact);
 
@@ -124,9 +122,25 @@ namespace CIN7Integration
                 var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMContactList));
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                Console.WriteLine("ContactSync error: " + e);
+                string filePath = @"C:\Crashes.txt";
+
+                using (StreamWriter writer = new StreamWriter(filePath, true))
+                {
+                    writer.WriteLine("-----------------------------------------------------------------------------");
+                    writer.WriteLine("Date : " + DateTime.Now.ToString());
+                    writer.WriteLine();
+
+                    while (ex != null)
+                    {
+                        writer.WriteLine(ex.GetType().FullName);
+                        writer.WriteLine("Message : " + ex.Message);
+                        writer.WriteLine("StackTrace : " + ex.StackTrace);
+
+                        ex = ex.InnerException;
+                    }
+                }
             }
         }
 
