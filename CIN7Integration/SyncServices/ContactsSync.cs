@@ -46,7 +46,7 @@ namespace CIN7Integration
         {
             try
             {
-                //1- get data from Cin7
+                //Maram: 1- get data from Cin7
                 var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
                 var ContactList = cin7_api.Contacts.Find().ToList();
 
@@ -74,14 +74,15 @@ namespace CIN7Integration
                 {
                     var tempContact = new ECommerceContactApiModel()
                     {
-                        //Name="",
-
+                        Name=item.FirstName+" "+item.LastName,
+                        FirstName = item.FirstName,
+                        LastName = item.LastName,
                         Title = item.JobTitle,
                         Organization = item.Company,
-                        ContactInfoSecondaryPhoneNumber = item.Phone,
+                        ContactInfoPrimaryPhoneNumber = item.Phone,
                         ContactInfoSecondaryEmail = item.Email,
-                        ContactInfoPrimaryPhoneNumber = item.AccountsPhone,
-                        ContactInfoPrimaryEmail = item.BillingEmail,
+                        ContactInfoSecondaryPhoneNumber = item.AccountsPhone,
+                        ContactInfoPrimaryEmail = item.Email,
                         ContactInfoWebsite = item.Website,
                         ContactInfoAddressLine1 = item.Address1,
                         ContactInfoAddressLine2 = item.Address2,
@@ -115,7 +116,7 @@ namespace CIN7Integration
 
 
 
-                // 2- post data to CRM
+                //Maram: 2- post data to CRM
                 var url = "/api/1.0/Contacts/SaveExternalBatch/WooCommerce/" + this._CIN7_UsereName;
 
 

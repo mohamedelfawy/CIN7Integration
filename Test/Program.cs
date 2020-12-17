@@ -12,8 +12,8 @@ namespace Test
         {
             string Cin7UsreName = "RevampcoUS";
             string Cin7ApiKey = "ef08b156c82740e191f0254b26e30c87";
-            string CRMUserName = "meweve4474@ibrilo.com";
-            string CRMApiKey = "nAmrgFVC115gami7Cw02SgdnV5IfTxBhJ7KMqtIc";
+            string CRMUserName = "ahmed.mohy2+1551@gmail.com";
+            string CRMApiKey = "Fjxr7lNEIGu7xzo1fkKCnwuwNTJhQaqoSpAVOEz3";
 
             string CIN7_EMail = "smeligy@revampco.com";
 

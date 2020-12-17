@@ -20,9 +20,8 @@ namespace CIN7Integration
         public string _CIN7_ApiKey { get; set; }
         public string _CRM_ApiKey { get; set; }
         public DateTime? _DateFrom { get; set; }
-        public string _providerName{get;set;}
+        public string _ProviderName{get;set;}
         public string _CRM_UserName { get; set; }
-        public string _ProviderName { get; set; }
         #endregion
         #region Ctor 
         public ProductsSync(string cinUserName, string cinAPiKey, string crmAPIKey, string providerName,string crmUserName, DateTime? fromDate)
@@ -31,7 +30,7 @@ namespace CIN7Integration
             this._CIN7_UsereName = cinUserName;
             this._CRM_ApiKey = crmAPIKey;
             this._DateFrom = fromDate;
-            this._providerName = providerName;
+            this._ProviderName = providerName;
             this._CRM_UserName = crmUserName;
         }
         #endregion
@@ -40,7 +39,7 @@ namespace CIN7Integration
         {
             try
             {
-                //1- get data from Cin7
+                //Maram:1- get data from Cin7
                 var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
                 var ProductsList = api.Products.Find(modifiedSince: this._DateFrom).ToList();
 
@@ -114,7 +113,7 @@ namespace CIN7Integration
                 }
 
 
-                // 2- post data to CRM
+                //Maram: 2- post data to CRM
                 var url = "/api/1.0/Products/Save/WooCommerce/" + this._CIN7_UsereName;
 
                 var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMProductList));

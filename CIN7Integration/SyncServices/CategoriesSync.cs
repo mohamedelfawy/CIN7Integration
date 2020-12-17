@@ -40,9 +40,9 @@ namespace CIN7Integration
         #region Functions 
         public void Start()
         {
-            try { 
-            //1- get data from Cin7
-            var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
+            try {
+                //Maram: 1- get data from Cin7
+                var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
             var CategoriesList = cin7_api.ProductCategories.Find().ToList();
 
                 var listCount = CategoriesList.Count();
@@ -105,9 +105,9 @@ namespace CIN7Integration
                 }
             }
 
-            // 2- post data to CRM
-            //POST 
-            var url = "/api/1.0/Categories/Save/"+_ProviderName+"/" + this._CIN7_UsereName;
+                //Maram: 2- post data to CRM
+                //POST 
+                var url = "/api/1.0/Categories/Save/"+_ProviderName+"/" + this._CIN7_UsereName;
 
           
             var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url,JsonFormatbody: JsonConvert.SerializeObject(CRMCategoryList));
