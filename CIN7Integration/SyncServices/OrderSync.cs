@@ -40,101 +40,97 @@ namespace CIN7Integration
             try {
                 //Maram: 1- get data from Cin7
                 var api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            var SalesOrderList = api.SalesOrders.Find(modifiedSince: this._DateFrom).ToList();
-                var listCount = SalesOrderList.Count();
-                int pagenum = 2;
-                if (listCount == 50)
-                {
+           // var SalesOrderList = api.SalesOrders.Find(modifiedSince: this._DateFrom).ToList();
+                var listCount = 0;
+                int pagenum = 1;
+               
                     do
                     {
-                        var rows = api.SalesOrders.Find(page: pagenum, rows: 50, modifiedSince: this._DateFrom);
-                        listCount = rows.Count();
-                        foreach (var item in rows)
-                        {
-                            SalesOrderList.Add(item);
-                        }
+                        var SalesOrderList = api.SalesOrders.Find(page: pagenum, rows: 50, modifiedSince: this._DateFrom);
+                        listCount = SalesOrderList.Count();
                         pagenum = pagenum + 1;
+                    var CRMOrderList = new List<ECommerceOrderApiModel>();
 
-                    } while (listCount == 50);
-
-                }
-
-
-                var CRMOrderList = new List<ECommerceOrderApiModel>();
-
-            foreach(var SalesOrder in SalesOrderList)
-            {
-                var temp = new ECommerceOrderApiModel()
-                {
-                    CreatedOn = SalesOrder.CreatedDate.Value,
-                    EcommProviderName = _ProviderName,
-                    ProviderStoreId = this._CRM_UserName,
-                    ProviderOrderId = SalesOrder.Id.ToString(),
-                    TotalTax = (double)(SalesOrder.TaxRate*SalesOrder.Total / 100),
-                    TotalPrice = double.Parse(SalesOrder.Total.ToString()),
-                    TotalDiscount = double.Parse(SalesOrder.DiscountTotal.ToString()),
-                    NumOfLines = SalesOrder.LineItems.Count,
-                    ShippingStatus = SalesOrder.DeliveryState,
-                    Currency = SalesOrder.CurrencyCode,
-                    CancelReason = "",
-                    ContactId = SalesOrder.CustomerOrderNo,
-                    coupon = "",
-                    FinancialStatus = SalesOrder.BillingState,
-                    ProviderOrderReference = SalesOrder.Reference,
-                    UpdatedOn = SalesOrder.CreatedDate.Value,
-                    
-
-                };
-                var item = api.Contacts.Find(SalesOrder.MemberId);
-                if(item != null)
-                {
-                    temp.Customer = new ContactCSVApiModel()
+                    foreach (var SalesOrder in SalesOrderList)
                     {
-
-                        Title = item.JobTitle,
-                        Organization = item.Company,
-                        ContactInfoSecondaryPhoneNumber = item.Phone,
-                        ContactInfoSecondaryEmail = item.Email,
-                        ContactInfoPrimaryPhoneNumber = item.AccountsPhone,
-                        ContactInfoPrimaryEmail = item.BillingEmail,
-                        ContactInfoWebsite = item.Website,
-                        ContactInfoAddressLine1 = item.Address1,
-                        ContactInfoAddressLine2 = item.Address2,
-                        ContactInfoAddressPostalCode = item.PostalPostCode,
-                        ContactInfoAddressCountry = item.Country,
-                        ContactInfoAddressState = item.State,
-                        CreatedOn = item.CreatedDate,
-                        UpdatedOn = item.ModifiedDate,
-                        ContactInfoAddressCity = item.Country,
-                        EmailValue = item.Email,
-                        ExternalProviderId = item.Id.ToString(),
-                        ExternalProviderName = _ProviderName
-
-                    };
-                }
-
-                foreach(var product in SalesOrder.LineItems)
-                {
-                    temp.LineItems.Add(new ECommerceCheckOutLineApiModel()
-                    {
-                        Price = product.UnitPrice.HasValue ? (double)product.UnitPrice.Value : 0,
-                        ProviderProductId = product.ProductId.ToString(),
-                        ProviderProductVariantId = product.ProductOptionId.ToString(),
-                        Quantity = (double)product.Quantity,
-                        
-                    });
-                }
-                CRMOrderList.Add(temp);
-
-            }
+                        var temp = new ECommerceOrderApiModel()
+                        {
+                            CreatedOn = SalesOrder.CreatedDate.Value,
+                            EcommProviderName = _ProviderName,
+                            ProviderStoreId = this._CRM_UserName,
+                            ProviderOrderId = SalesOrder.Id.ToString(),
+                            TotalTax = (double)(SalesOrder.TaxRate * SalesOrder.Total / 100),
+                            TotalPrice = double.Parse(SalesOrder.Total.ToString()),
+                            TotalDiscount = double.Parse(SalesOrder.DiscountTotal.ToString()),
+                            NumOfLines = SalesOrder.LineItems.Count,
+                            ShippingStatus = SalesOrder.DeliveryState,
+                            Currency = SalesOrder.CurrencyCode,
+                            CancelReason = "",
+                            ContactId = SalesOrder.CustomerOrderNo,
+                            coupon = "",
+                            FinancialStatus = SalesOrder.BillingState,
+                            ProviderOrderReference = SalesOrder.Reference,
+                            UpdatedOn = SalesOrder.CreatedDate.Value,
 
 
-                //Maram: 2- post data to CRM
-                var url = "/api/1.0/Orders/Save/WooCommerce/" + this._CIN7_UsereName;
-           
-            
-            var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMOrderList));
-        }catch(Exception ex)
+                        };
+                        var item = api.Contacts.Find(SalesOrder.MemberId);
+                        if (item != null)
+                        {
+                            temp.Customer = new ContactCSVApiModel()
+                            {
+
+                                Title = item.JobTitle,
+                                Organization = item.Company,
+                                ContactInfoSecondaryPhoneNumber = item.Phone,
+                                ContactInfoSecondaryEmail = item.Email,
+                                ContactInfoPrimaryPhoneNumber = item.AccountsPhone,
+                                ContactInfoPrimaryEmail = item.BillingEmail,
+                                ContactInfoWebsite = item.Website,
+                                ContactInfoAddressLine1 = item.Address1,
+                                ContactInfoAddressLine2 = item.Address2,
+                                ContactInfoAddressPostalCode = item.PostalPostCode,
+                                ContactInfoAddressCountry = item.Country,
+                                ContactInfoAddressState = item.State,
+                                CreatedOn = item.CreatedDate,
+                                UpdatedOn = item.ModifiedDate,
+                                ContactInfoAddressCity = item.Country,
+                                EmailValue = item.Email,
+                                ExternalProviderId = item.Id.ToString(),
+                                ExternalProviderName = _ProviderName
+
+                            };
+                        }
+
+                        foreach (var product in SalesOrder.LineItems)
+                        {
+                            temp.LineItems.Add(new ECommerceCheckOutLineApiModel()
+                            {
+                                Price = product.UnitPrice.HasValue ? (double)product.UnitPrice.Value : 0,
+                                ProviderProductId = product.ProductId.ToString(),
+                                ProviderProductVariantId = product.ProductOptionId.ToString(),
+                                Quantity = (double)product.Quantity,
+
+                            });
+                        }
+                        CRMOrderList.Add(temp);
+
+                    }
+
+
+                    //Maram: 2- post data to CRM
+                    var url = "/api/1.0/Orders/Save/WooCommerce/" + this._CIN7_UsereName;
+
+
+                    var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMOrderList));
+
+
+                } while (listCount == 50);
+
+                
+
+
+                  }catch(Exception ex)
             {
                 string filePath = @"C:\Crashes.txt";
 
