@@ -43,7 +43,7 @@ namespace CIN7Integration
             try {
                 //Maram: 1- get data from Cin7
                 var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-            var CategoriesList = cin7_api.ProductCategories.Find().ToList();
+                var CategoriesList = cin7_api.ProductCategories.Find().ToList();
 
                 var listCount = CategoriesList.Count();
                 int pagenum = 2;
