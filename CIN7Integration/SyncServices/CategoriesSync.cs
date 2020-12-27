@@ -43,75 +43,70 @@ namespace CIN7Integration
             try {
                 //Maram: 1- get data from Cin7
                 var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-                var CategoriesList = cin7_api.ProductCategories.Find().ToList();
 
-                var listCount = CategoriesList.Count();
-                int pagenum = 2;
-                if (listCount == 50)
-                {
+                var listCount = 0;
+                int pagenum = 1;
+               
                     do
                     {
-                        var rows = cin7_api.ProductCategories.Find(page: pagenum, rows: 50);
-                        listCount = rows.Count();
-                        foreach (var item in rows)
-                        {
-                            CategoriesList.Add(item);
-                        }
+                        var CategoriesList = cin7_api.ProductCategories.Find(page: pagenum, rows: 50);
+                        listCount = CategoriesList.Count();
                         pagenum = pagenum + 1;
-                        
-                    } while (listCount == 50);
-
-                }
-
-
-                var CRMCategoryList = new List<ECommerceCategoryApiModel>();
-            foreach(var item in CategoriesList)
-            {
-                
-                CRMCategoryList.Add(new ECommerceCategoryApiModel()
-                {
-                    
-                    CreatedOn = DateTime.Now,
-                    ECommerceProviderName = _ProviderName,
-                    ProviderCategoryId = item.Id.ToString(),
-                    ProviderStoreId = this._CIN7_UsereName,
-                    Title = item.Name,
-                    Description = item.Description,
-                    ProviderCategoryHandle = item.Name
-
-                });
-                var parentId = item.ParentId;
-                while(parentId != 0)
-                {
-                    if (CRMCategoryList.Where(c => c.ProviderCategoryId == parentId.ToString()).Count() < 1)
+                    var CRMCategoryList = new List<ECommerceCategoryApiModel>();
+                    foreach (var item in CategoriesList)
                     {
-                        var cat = cin7_api.ProductCategories.Find(parentId);
+
                         CRMCategoryList.Add(new ECommerceCategoryApiModel()
                         {
+
                             CreatedOn = DateTime.Now,
                             ECommerceProviderName = _ProviderName,
-                            ProviderCategoryId = cat.Id.ToString(),
+                            ProviderCategoryId = item.Id.ToString(),
                             ProviderStoreId = this._CIN7_UsereName,
-                            Title = cat.Name,
-                            Description = cat.Description,
-
+                            Title = item.Name,
+                            Description = item.Description,
+                            ProviderCategoryHandle = item.Name
 
                         });
-                        parentId = cat.ParentId;
+                        var parentId = item.ParentId;
+                        while (parentId != 0)
+                        {
+                            if (CRMCategoryList.Where(c => c.ProviderCategoryId == parentId.ToString()).Count() < 1)
+                            {
+                                var cat = cin7_api.ProductCategories.Find(parentId);
+                                CRMCategoryList.Add(new ECommerceCategoryApiModel()
+                                {
+                                    CreatedOn = DateTime.Now,
+                                    ECommerceProviderName = _ProviderName,
+                                    ProviderCategoryId = cat.Id.ToString(),
+                                    ProviderStoreId = this._CIN7_UsereName,
+                                    Title = cat.Name,
+                                    Description = cat.Description,
+
+
+                                });
+                                parentId = cat.ParentId;
+                            }
+                            else
+                                parentId = 0;
+
+                        }
                     }
-                    else
-                        parentId = 0;
+
+                    //Maram: 2- post data to CRM
+                    //POST 
+                    var url = "/api/1.0/Categories/Save/" + _ProviderName + "/" + this._CIN7_UsereName;
+
+
+                    var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonFormatbody: JsonConvert.SerializeObject(CRMCategoryList));
+
+
+                } while (listCount == 50);
+
+                
+
 
                 }
-            }
-
-                //Maram: 2- post data to CRM
-                //POST 
-                var url = "/api/1.0/Categories/Save/"+_ProviderName+"/" + this._CIN7_UsereName;
-
-          
-            var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url,JsonFormatbody: JsonConvert.SerializeObject(CRMCategoryList));
-            }
             catch (Exception ex)
             {
                 string filePath = @"C:\Crashes.txt";

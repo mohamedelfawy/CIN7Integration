@@ -48,80 +48,62 @@ namespace CIN7Integration
             {
                 //Maram: 1- get data from Cin7
                 var cin7_api = new Cin7Api(new ApiUser(this._CIN7_UsereName, this._CIN7_ApiKey));
-                var ContactList = cin7_api.Contacts.Find().ToList();
-
-                var listCount = ContactList.Count();
-                int pagenum = 2;
-                if (listCount == 50)
-                {
-                    do
+                var listCount = 0;
+                int pagenum = 1;
+                do
                     {
-                        var rows = cin7_api.Contacts.Find(page: pagenum, rows: 50);
-                        listCount = rows.Count();
-                        foreach (var item in rows)
+                   // var ContactList = cin7_api.Contacts.Find().ToList();
+
+                    var ContactList = cin7_api.Contacts.Find(page: pagenum, rows: 50);
+                     listCount = ContactList.Count();
+                    pagenum = pagenum + 1;
+
+                        var CRMContactList = new List<ECommerceContactApiModel>();
+                        foreach (var item in ContactList)
                         {
-                            ContactList.Add(item);
+                            var tempContact = new ECommerceContactApiModel()
+                            {
+                                Name = item.FirstName + " " + item.LastName,
+                                FirstName = item.FirstName,
+                                LastName = item.LastName,
+                                Title = item.JobTitle,
+                                Organization = item.Company,
+                                ContactInfoPrimaryPhoneNumber = item.Phone,
+                                ContactInfoSecondaryEmail = item.Email,
+                                ContactInfoSecondaryPhoneNumber = item.AccountsPhone,
+                                ContactInfoPrimaryEmail = item.Email,
+                                ContactInfoWebsite = item.Website,
+                                ContactInfoAddressLine1 = item.Address1,
+                                ContactInfoAddressLine2 = item.Address2,
+                                ContactInfoAddressPostalCode = item.PostalPostCode,
+                                ContactInfoAddressCountry = item.Country,
+                                ContactInfoAddressState = item.State,
+                                CreatedOn = item.CreatedDate,
+                                UpdatedOn = item.ModifiedDate,
+                                ContactInfoAddressCity = item.Country,
+                                EmailValue = item.Email,
+                                ExternalProviderId = item.Id.ToString(),
+                                ExternalProviderName = _ProviderName
+                                //ContactInfoskype = "",
+                                //ContactInfoFacebook = "",
+                                //ContactInfoTwitter = "",
+                                //Description = "",
+                                //ContactInfoLinkedIn = "",
+                                //Gender = "",
+                                //Tags = "",
+                                //Score = 0,
+                                //ContactStage = "",
+                                //rating_contact = 0,
+                                //ContactSource = "",
+
+
+                            };
+                            CRMContactList.Add(tempContact);
                         }
-                        pagenum = pagenum + 1;
-
+                        //Maram: 2- post data to CRM
+                        var url = "/api/1.0/Contacts/SaveExternalBatch/WooCommerce/" + this._CIN7_UsereName;
+                        var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMContactList));
                     } while (listCount == 50);
-
-                }
-
-
-                var CRMContactList = new List<ECommerceContactApiModel>();
-                foreach (var item in ContactList)
-                {
-                    var tempContact = new ECommerceContactApiModel()
-                    {
-                        Name=item.FirstName+" "+item.LastName,
-                        FirstName = item.FirstName,
-                        LastName = item.LastName,
-                        Title = item.JobTitle,
-                        Organization = item.Company,
-                        ContactInfoPrimaryPhoneNumber = item.Phone,
-                        ContactInfoSecondaryEmail = item.Email,
-                        ContactInfoSecondaryPhoneNumber = item.AccountsPhone,
-                        ContactInfoPrimaryEmail = item.Email,
-                        ContactInfoWebsite = item.Website,
-                        ContactInfoAddressLine1 = item.Address1,
-                        ContactInfoAddressLine2 = item.Address2,
-                        ContactInfoAddressPostalCode = item.PostalPostCode,
-                        ContactInfoAddressCountry = item.Country,
-                        ContactInfoAddressState = item.State,
-                        CreatedOn = item.CreatedDate,
-                        UpdatedOn = item.ModifiedDate,
-                        ContactInfoAddressCity = item.Country,
-                        EmailValue = item.Email,
-                        ExternalProviderId = item.Id.ToString(),
-                        ExternalProviderName = _ProviderName
-                        //ContactInfoskype = "",
-                        //ContactInfoFacebook = "",
-                        //ContactInfoTwitter = "",
-                        //Description = "",
-                        //ContactInfoLinkedIn = "",
-                        //Gender = "",
-                        //Tags = "",
-                        //Score = 0,
-                        //ContactStage = "",
-                        //rating_contact = 0,
-                        //ContactSource = "",
-
-
-                    };
-
-                    CRMContactList.Add(tempContact);
-
-                }
-
-
-
-                //Maram: 2- post data to CRM
-                var url = "/api/1.0/Contacts/SaveExternalBatch/WooCommerce/" + this._CIN7_UsereName;
-
-
-                var response = RestApi.PostRequest(this._CRM_UserName, this._CRM_ApiKey, url, JsonConvert.SerializeObject(CRMContactList));
-
             }
             catch (Exception ex)
             {
